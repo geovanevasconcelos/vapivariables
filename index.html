@@ -30,7 +30,7 @@
             // Retrieve and decode parameters from the query string
             const encodedApiKey = getQueryParam('apiKey');
             const apiKey = base64Decode(encodedApiKey) || '<your_public_api_key>';
-            const assistant = getQueryParam('assistant') || '<assistant_id>';
+            const assistantId = getQueryParam('assistant') || '<assistant_id>';
             const title = getQueryParam('title') || 'Have a quick question?';
             const subtitle = getQueryParam('subtitle') || 'Talk with our AI assistant';
             const parentOrigin = getQueryParam('parentOrigin') || window.location.origin;
@@ -56,7 +56,7 @@
                     language: "en-US",
                 },
                 recordingEnabled: false,
-                variableValues: assistantOverrides.variableValues || {}
+                variableValues: assistantOverrides.variableValues || {}  // Keep existing variableValues from assistantOverrides
             };
 
             // Configure the button appearance and behavior
@@ -130,11 +130,10 @@
 
                 try {
                     // Initialize vapiInstance using the Vapi SDK
-                    vapiInstance = window.vapiSDK.run({
-                        apiKey: apiKey, // Use the decoded API key
-                        assistant: assistant, // Mandatory
-                        config: buttonConfig, // Optional
-                    }, fullAssistantOverrides);  // Pass the full assistantOverrides object
+                    vapiInstance = new Vapi(apiKey); // Initialize Vapi instance
+
+                    // Start the assistant using the assistant ID and assistantOverrides
+                    vapiInstance.start(assistantId, fullAssistantOverrides);
 
                     console.log("Vapi SDK initialized with assistantOverrides:", fullAssistantOverrides); // Debugging Vapi initialization
 
