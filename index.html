@@ -35,7 +35,7 @@
             const subtitle = getQueryParam('subtitle') || 'Talk with our AI assistant';
             const parentOrigin = getQueryParam('parentOrigin') || window.location.origin;
             
-            // Retrieve assistantOverrides from the query string
+            // Retrieve assistantOverrides (only variables) from the query string
             const assistantOverridesString = getQueryParam('assistantOverrides') || '{}';
             const assistantOverrides = JSON.parse(decodeURIComponent(assistantOverridesString));
 
@@ -114,7 +114,7 @@
                         apiKey: apiKey, // Use the decoded API key
                         assistant: assistant, // Mandatory
                         config: buttonConfig, // Optional
-                    }, assistantOverrides);  // Pass the assistantOverrides here
+                    }, { variableValues: assistantOverrides });  // Only pass variableValues inside assistantOverrides
 
                     // Event listeners for status updates
                     vapiInstance.on('call-start', () => {
