@@ -37,7 +37,16 @@
             
             // Retrieve assistantOverrides (only variables) from the query string
             const assistantOverridesString = getQueryParam('assistantOverrides') || '{}';
-            const assistantOverrides = JSON.parse(decodeURIComponent(assistantOverridesString));
+
+            // Try to decode and parse assistantOverrides and catch any potential errors
+            let assistantOverrides;
+            try {
+                assistantOverrides = JSON.parse(decodeURIComponent(assistantOverridesString));
+                console.log("Parsed assistantOverrides:", assistantOverrides);  // Debugging parsed assistantOverrides
+            } catch (error) {
+                console.error("Error parsing assistantOverrides:", error);
+                assistantOverrides = {}; // Default to an empty object if parsing fails
+            }
 
             // Configure the button appearance and behavior
             const buttonConfig = {
@@ -114,7 +123,9 @@
                         apiKey: apiKey, // Use the decoded API key
                         assistant: assistant, // Mandatory
                         config: buttonConfig, // Optional
-                    }, { variableValues: assistantOverrides });  // Only pass variableValues inside assistantOverrides
+                    }, { variableValues: assistantOverrides });  // Pass the assistantOverrides object
+
+                    console.log("Vapi SDK initialized with assistantOverrides:", assistantOverrides); // Debugging Vapi initialization
 
                     // Event listeners for status updates
                     vapiInstance.on('call-start', () => {
@@ -134,6 +145,7 @@
                     });
 
                     vapiInstance.on('error', (e) => {
+                        console.error("Vapi SDK error:", e);  // Log errors from Vapi SDK
                         window.parent.postMessage({
                             type: 'error',
                             data: e.message || e
@@ -205,6 +217,7 @@
                     setInterval(sendHeartbeat, 30000);
 
                 } catch (error) {
+                    console.error("Error initializing Vapi SDK:", error);  // Catch and log any initialization errors
                     window.parent.postMessage({
                         type: 'error',
                         data: error.message || error
