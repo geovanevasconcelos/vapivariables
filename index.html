@@ -48,6 +48,17 @@
                 assistantOverrides = {}; // Default to an empty object if parsing fails
             }
 
+            // Create the full assistantOverrides, adding the transcriber and recordingEnabled configurations
+            const fullAssistantOverrides = {
+                transcriber: {
+                    provider: "deepgram",
+                    model: "nova-2",
+                    language: "en-US",
+                },
+                recordingEnabled: false,
+                variableValues: assistantOverrides.variableValues || {}
+            };
+
             // Configure the button appearance and behavior
             const buttonConfig = {
                 position: "bottom-right",
@@ -123,9 +134,9 @@
                         apiKey: apiKey, // Use the decoded API key
                         assistant: assistant, // Mandatory
                         config: buttonConfig, // Optional
-                    }, { variableValues: assistantOverrides });  // Pass the assistantOverrides object
+                    }, fullAssistantOverrides);  // Pass the full assistantOverrides object
 
-                    console.log("Vapi SDK initialized with assistantOverrides:", assistantOverrides); // Debugging Vapi initialization
+                    console.log("Vapi SDK initialized with assistantOverrides:", fullAssistantOverrides); // Debugging Vapi initialization
 
                     // Event listeners for status updates
                     vapiInstance.on('call-start', () => {
